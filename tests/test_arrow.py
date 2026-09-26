@@ -50,7 +50,8 @@ class TestTestArrowInit:
         assert result._datetime == self.expected
 
         result = arrow.Arrow(2013, 2, 2, 12, 30, 45, 999999)
-        self.expected = datetime(2013, 2, 2, 12, 30, 45, 999999, tzinfo=tz.tzutc())
+        self.expected = datetime(
+            2013, 2, 2, 12, 30, 45, 999999, tzinfo=tz.tzutc())
         assert result._datetime == self.expected
 
         result = arrow.Arrow(
@@ -94,7 +95,8 @@ class TestTestArrowInit:
 
     def test_init_with_fold(self):
         before = arrow.Arrow(2017, 10, 29, 2, 0, tzinfo="Europe/Stockholm")
-        after = arrow.Arrow(2017, 10, 29, 2, 0, tzinfo="Europe/Stockholm", fold=1)
+        after = arrow.Arrow(2017, 10, 29, 2, 0,
+                            tzinfo="Europe/Stockholm", fold=1)
 
         assert hasattr(before, "fold")
         assert hasattr(after, "fold")
@@ -114,7 +116,8 @@ class TestTestArrowFactory:
         result = arrow.Arrow.utcnow()
 
         assert_datetime_equality(
-            result._datetime, datetime.now(timezone.utc).replace(tzinfo=timezone.utc)
+            result._datetime, datetime.now(
+                timezone.utc).replace(tzinfo=timezone.utc)
         )
 
         assert result.fold == 0
@@ -125,7 +128,8 @@ class TestTestArrowFactory:
         result = arrow.Arrow.fromtimestamp(timestamp)
         assert_datetime_equality(result._datetime, datetime.now().astimezone())
 
-        result = arrow.Arrow.fromtimestamp(timestamp, tzinfo=ZoneInfo("Europe/Paris"))
+        result = arrow.Arrow.fromtimestamp(
+            timestamp, tzinfo=ZoneInfo("Europe/Paris"))
         assert_datetime_equality(
             result._datetime,
             datetime.fromtimestamp(timestamp, ZoneInfo("Europe/Paris")),
@@ -145,7 +149,8 @@ class TestTestArrowFactory:
 
         result = arrow.Arrow.utcfromtimestamp(timestamp)
         assert_datetime_equality(
-            result._datetime, datetime.now(timezone.utc).replace(tzinfo=timezone.utc)
+            result._datetime, datetime.now(
+                timezone.utc).replace(tzinfo=timezone.utc)
         )
 
         with pytest.raises(ValueError):
@@ -177,13 +182,16 @@ class TestTestArrowFactory:
 
         result = arrow.Arrow.fromdate(dt, ZoneInfo("US/Pacific"))
 
-        assert result._datetime == datetime(2013, 2, 3, tzinfo=ZoneInfo("US/Pacific"))
+        assert result._datetime == datetime(
+            2013, 2, 3, tzinfo=ZoneInfo("US/Pacific"))
 
     def test_strptime(self):
-        formatted = datetime(2013, 2, 3, 12, 30, 45).strftime("%Y-%m-%d %H:%M:%S")
+        formatted = datetime(2013, 2, 3, 12, 30, 45).strftime(
+            "%Y-%m-%d %H:%M:%S")
 
         result = arrow.Arrow.strptime(formatted, "%Y-%m-%d %H:%M:%S")
-        assert result._datetime == datetime(2013, 2, 3, 12, 30, 45, tzinfo=tz.tzutc())
+        assert result._datetime == datetime(
+            2013, 2, 3, 12, 30, 45, tzinfo=tz.tzutc())
 
         result = arrow.Arrow.strptime(
             formatted, "%Y-%m-%d %H:%M:%S", tzinfo=ZoneInfo("Europe/Paris")
@@ -292,7 +300,8 @@ class TestArrowAttribute:
         assert self.arrow.timestamp() == self.arrow._datetime.timestamp()
 
     def test_int_timestamp(self):
-        assert self.arrow.int_timestamp == int(self.arrow._datetime.timestamp())
+        assert self.arrow.int_timestamp == int(
+            self.arrow._datetime.timestamp())
 
     def test_float_timestamp(self):
         assert self.arrow.float_timestamp == self.arrow._datetime.timestamp()
@@ -312,7 +321,8 @@ class TestArrowAttribute:
     def test_getattr_ambiguous(self):
         assert not self.now.ambiguous
 
-        ambiguous_dt = arrow.Arrow(2017, 10, 29, 2, 0, tzinfo="Europe/Stockholm")
+        ambiguous_dt = arrow.Arrow(
+            2017, 10, 29, 2, 0, tzinfo="Europe/Stockholm")
 
         assert ambiguous_dt.ambiguous
 
@@ -402,7 +412,8 @@ class TestArrowMath:
         assert result == timedelta(days=11)
 
     def test_sub_arrow(self):
-        result = self.arrow.__sub__(arrow.Arrow(2012, 12, 21, tzinfo=tz.tzutc()))
+        result = self.arrow.__sub__(
+            arrow.Arrow(2012, 12, 21, tzinfo=tz.tzutc()))
 
         assert result == timedelta(days=11)
 
@@ -497,10 +508,12 @@ class TestArrowDatetimeInterface:
         assert result == self.arrow._datetime.isoformat()
 
         result = self.arrow.isoformat(timespec="milliseconds")
-        assert result == self.arrow._datetime.isoformat(timespec="milliseconds")
+        assert result == self.arrow._datetime.isoformat(
+            timespec="milliseconds")
 
         result = self.arrow.isoformat(sep="x", timespec="seconds")
-        assert result == self.arrow._datetime.isoformat(sep="x", timespec="seconds")
+        assert result == self.arrow._datetime.isoformat(
+            sep="x", timespec="seconds")
 
     def test_simplejson(self):
         result = json.dumps({"v": self.arrow.for_json()}, for_json=True)
@@ -546,16 +559,20 @@ class TestArrowFalsePositiveDst:
         self.before_1 = arrow.Arrow(
             2016, 11, 6, 3, 59, tzinfo=ZoneInfo("America/New_York")
         )
-        self.before_2 = arrow.Arrow(2016, 11, 6, tzinfo=ZoneInfo("America/New_York"))
-        self.after_1 = arrow.Arrow(2016, 11, 6, 4, tzinfo=ZoneInfo("America/New_York"))
+        self.before_2 = arrow.Arrow(
+            2016, 11, 6, tzinfo=ZoneInfo("America/New_York"))
+        self.after_1 = arrow.Arrow(
+            2016, 11, 6, 4, tzinfo=ZoneInfo("America/New_York"))
         self.after_2 = arrow.Arrow(
             2016, 11, 6, 23, 59, tzinfo=ZoneInfo("America/New_York")
         )
         self.before_3 = arrow.Arrow(
             2018, 11, 4, 3, 59, tzinfo=ZoneInfo("America/New_York")
         )
-        self.before_4 = arrow.Arrow(2018, 11, 4, tzinfo=ZoneInfo("America/New_York"))
-        self.after_3 = arrow.Arrow(2018, 11, 4, 4, tzinfo=ZoneInfo("America/New_York"))
+        self.before_4 = arrow.Arrow(
+            2018, 11, 4, tzinfo=ZoneInfo("America/New_York"))
+        self.after_3 = arrow.Arrow(
+            2018, 11, 4, 4, tzinfo=ZoneInfo("America/New_York"))
         self.after_4 = arrow.Arrow(
             2018, 11, 4, 23, 59, tzinfo=ZoneInfo("America/New_York")
         )
@@ -579,7 +596,8 @@ class TestArrowConversion:
 
     # issue #368
     def test_to_pacific_then_utc(self):
-        result = arrow.Arrow(2018, 11, 4, 1, tzinfo="-08:00").to("US/Pacific").to("UTC")
+        result = arrow.Arrow(
+            2018, 11, 4, 1, tzinfo="-08:00").to("US/Pacific").to("UTC")
         assert result == arrow.Arrow(2018, 11, 4, 9)
 
     # issue #368
@@ -589,7 +607,8 @@ class TestArrowConversion:
 
     # regression test for #690
     def test_to_israel_same_offset(self):
-        result = arrow.Arrow(2019, 10, 27, 2, 21, 1, tzinfo="+03:00").to("Israel")
+        result = arrow.Arrow(2019, 10, 27, 2, 21, 1,
+                             tzinfo="+03:00").to("Israel")
         expected = arrow.Arrow(2019, 10, 27, 1, 21, 1, tzinfo="Israel")
 
         assert result == expected
@@ -604,27 +623,36 @@ class TestArrowConversion:
 
     # issue 476
     def test_chicago_fall(self):
-        result = arrow.Arrow(2017, 11, 5, 2, 1, tzinfo="-05:00").to("America/Chicago")
+        result = arrow.Arrow(
+            2017, 11, 5, 2, 1, tzinfo="-05:00").to("America/Chicago")
         expected = arrow.Arrow(2017, 11, 5, 1, 1, tzinfo="America/Chicago")
 
         assert result == expected
         assert result.utcoffset() != expected.utcoffset()
 
     def test_toronto_gap(self):
-        before = arrow.Arrow(2011, 3, 13, 6, 30, tzinfo="UTC").to("America/Toronto")
-        after = arrow.Arrow(2011, 3, 13, 7, 30, tzinfo="UTC").to("America/Toronto")
+        before = arrow.Arrow(2011, 3, 13, 6, 30,
+                             tzinfo="UTC").to("America/Toronto")
+        after = arrow.Arrow(2011, 3, 13, 7, 30, tzinfo="UTC").to(
+            "America/Toronto")
 
-        assert before.datetime.replace(tzinfo=None) == datetime(2011, 3, 13, 1, 30)
-        assert after.datetime.replace(tzinfo=None) == datetime(2011, 3, 13, 3, 30)
+        assert before.datetime.replace(
+            tzinfo=None) == datetime(2011, 3, 13, 1, 30)
+        assert after.datetime.replace(
+            tzinfo=None) == datetime(2011, 3, 13, 3, 30)
 
         assert before.utcoffset() != after.utcoffset()
 
     def test_sydney_gap(self):
-        before = arrow.Arrow(2012, 10, 6, 15, 30, tzinfo="UTC").to("Australia/Sydney")
-        after = arrow.Arrow(2012, 10, 6, 16, 30, tzinfo="UTC").to("Australia/Sydney")
+        before = arrow.Arrow(2012, 10, 6, 15, 30,
+                             tzinfo="UTC").to("Australia/Sydney")
+        after = arrow.Arrow(2012, 10, 6, 16, 30, tzinfo="UTC").to(
+            "Australia/Sydney")
 
-        assert before.datetime.replace(tzinfo=None) == datetime(2012, 10, 7, 1, 30)
-        assert after.datetime.replace(tzinfo=None) == datetime(2012, 10, 7, 3, 30)
+        assert before.datetime.replace(
+            tzinfo=None) == datetime(2012, 10, 7, 1, 30)
+        assert after.datetime.replace(
+            tzinfo=None) == datetime(2012, 10, 7, 3, 30)
 
         assert before.utcoffset() != after.utcoffset()
 
@@ -674,8 +702,10 @@ class TestArrowReplace:
     def test_replace_fold_and_other(self):
         arw = arrow.Arrow(2013, 5, 5, 12, 30, 45)
 
-        assert arw.replace(fold=1, minute=50) == arrow.Arrow(2013, 5, 5, 12, 50, 45)
-        assert arw.replace(minute=50, fold=1) == arrow.Arrow(2013, 5, 5, 12, 50, 45)
+        assert arw.replace(fold=1, minute=50) == arrow.Arrow(
+            2013, 5, 5, 12, 50, 45)
+        assert arw.replace(minute=50, fold=1) == arrow.Arrow(
+            2013, 5, 5, 12, 50, 45)
 
     def test_replace_week(self):
         with pytest.raises(ValueError):
@@ -712,14 +742,16 @@ class TestArrowShift:
 
         assert arw.shift(years=1) == arrow.Arrow(2014, 5, 5, 12, 30, 45)
         assert arw.shift(quarters=1) == arrow.Arrow(2013, 8, 5, 12, 30, 45)
-        assert arw.shift(quarters=1, months=1) == arrow.Arrow(2013, 9, 5, 12, 30, 45)
+        assert arw.shift(quarters=1, months=1) == arrow.Arrow(
+            2013, 9, 5, 12, 30, 45)
         assert arw.shift(months=1) == arrow.Arrow(2013, 6, 5, 12, 30, 45)
         assert arw.shift(weeks=1) == arrow.Arrow(2013, 5, 12, 12, 30, 45)
         assert arw.shift(days=1) == arrow.Arrow(2013, 5, 6, 12, 30, 45)
         assert arw.shift(hours=1) == arrow.Arrow(2013, 5, 5, 13, 30, 45)
         assert arw.shift(minutes=1) == arrow.Arrow(2013, 5, 5, 12, 31, 45)
         assert arw.shift(seconds=1) == arrow.Arrow(2013, 5, 5, 12, 30, 46)
-        assert arw.shift(microseconds=1) == arrow.Arrow(2013, 5, 5, 12, 30, 45, 1)
+        assert arw.shift(microseconds=1) == arrow.Arrow(
+            2013, 5, 5, 12, 30, 45, 1)
 
         # Remember: Python's weekday 0 is Monday
         assert arw.shift(weekday=0) == arrow.Arrow(2013, 5, 6, 12, 30, 45)
@@ -768,14 +800,16 @@ class TestArrowShift:
 
         assert arw.shift(years=-1) == arrow.Arrow(2012, 5, 5, 12, 30, 45)
         assert arw.shift(quarters=-1) == arrow.Arrow(2013, 2, 5, 12, 30, 45)
-        assert arw.shift(quarters=-1, months=-1) == arrow.Arrow(2013, 1, 5, 12, 30, 45)
+        assert arw.shift(quarters=-1, months=-
+                         1) == arrow.Arrow(2013, 1, 5, 12, 30, 45)
         assert arw.shift(months=-1) == arrow.Arrow(2013, 4, 5, 12, 30, 45)
         assert arw.shift(weeks=-1) == arrow.Arrow(2013, 4, 28, 12, 30, 45)
         assert arw.shift(days=-1) == arrow.Arrow(2013, 5, 4, 12, 30, 45)
         assert arw.shift(hours=-1) == arrow.Arrow(2013, 5, 5, 11, 30, 45)
         assert arw.shift(minutes=-1) == arrow.Arrow(2013, 5, 5, 12, 29, 45)
         assert arw.shift(seconds=-1) == arrow.Arrow(2013, 5, 5, 12, 30, 44)
-        assert arw.shift(microseconds=-1) == arrow.Arrow(2013, 5, 5, 12, 30, 44, 999999)
+        assert arw.shift(microseconds=-1) == arrow.Arrow(2013,
+                                                         5, 5, 12, 30, 44, 999999)
 
         # Not sure how practical these negative weekdays are
         assert arw.shift(weekday=-1) == arw.shift(weekday=SU)
@@ -789,14 +823,17 @@ class TestArrowShift:
         with pytest.raises(IndexError):
             arw.shift(weekday=-8)
 
-        assert arw.shift(weekday=MO(-1)) == arrow.Arrow(2013, 4, 29, 12, 30, 45)
-        assert arw.shift(weekday=TU(-1)) == arrow.Arrow(2013, 4, 30, 12, 30, 45)
+        assert arw.shift(weekday=MO(-1)) == arrow.Arrow(2013,
+                                                        4, 29, 12, 30, 45)
+        assert arw.shift(weekday=TU(-1)) == arrow.Arrow(2013,
+                                                        4, 30, 12, 30, 45)
         assert arw.shift(weekday=WE(-1)) == arrow.Arrow(2013, 5, 1, 12, 30, 45)
         assert arw.shift(weekday=TH(-1)) == arrow.Arrow(2013, 5, 2, 12, 30, 45)
         assert arw.shift(weekday=FR(-1)) == arrow.Arrow(2013, 5, 3, 12, 30, 45)
         assert arw.shift(weekday=SA(-1)) == arrow.Arrow(2013, 5, 4, 12, 30, 45)
         assert arw.shift(weekday=SU(-1)) == arw
-        assert arw.shift(weekday=SU(-2)) == arrow.Arrow(2013, 4, 28, 12, 30, 45)
+        assert arw.shift(weekday=SU(-2)) == arrow.Arrow(2013,
+                                                        4, 28, 12, 30, 45)
 
     def test_shift_quarters_bug(self):
         arw = arrow.Arrow(2013, 5, 5, 12, 30, 45)
@@ -804,13 +841,20 @@ class TestArrowShift:
         # The value of the last-read argument was used instead of the ``quarters`` argument.
         # Recall that the keyword argument dict, like all dicts, is unordered, so only certain
         # combinations of arguments would exhibit this.
-        assert arw.shift(quarters=0, years=1) == arrow.Arrow(2014, 5, 5, 12, 30, 45)
-        assert arw.shift(quarters=0, months=1) == arrow.Arrow(2013, 6, 5, 12, 30, 45)
-        assert arw.shift(quarters=0, weeks=1) == arrow.Arrow(2013, 5, 12, 12, 30, 45)
-        assert arw.shift(quarters=0, days=1) == arrow.Arrow(2013, 5, 6, 12, 30, 45)
-        assert arw.shift(quarters=0, hours=1) == arrow.Arrow(2013, 5, 5, 13, 30, 45)
-        assert arw.shift(quarters=0, minutes=1) == arrow.Arrow(2013, 5, 5, 12, 31, 45)
-        assert arw.shift(quarters=0, seconds=1) == arrow.Arrow(2013, 5, 5, 12, 30, 46)
+        assert arw.shift(quarters=0, years=1) == arrow.Arrow(
+            2014, 5, 5, 12, 30, 45)
+        assert arw.shift(quarters=0, months=1) == arrow.Arrow(
+            2013, 6, 5, 12, 30, 45)
+        assert arw.shift(quarters=0, weeks=1) == arrow.Arrow(
+            2013, 5, 12, 12, 30, 45)
+        assert arw.shift(quarters=0, days=1) == arrow.Arrow(
+            2013, 5, 6, 12, 30, 45)
+        assert arw.shift(quarters=0, hours=1) == arrow.Arrow(
+            2013, 5, 5, 13, 30, 45)
+        assert arw.shift(quarters=0, minutes=1) == arrow.Arrow(
+            2013, 5, 5, 12, 31, 45)
+        assert arw.shift(quarters=0, seconds=1) == arrow.Arrow(
+            2013, 5, 5, 12, 30, 46)
         assert arw.shift(quarters=0, microseconds=1) == arrow.Arrow(
             2013, 5, 5, 12, 30, 45, 1
         )
@@ -884,7 +928,8 @@ class TestArrowShift:
     def test_shift_kiritimati(self):
         # corrected 2018d tz database release, will fail in earlier versions
 
-        kiritimati = arrow.Arrow(1994, 12, 30, 12, 30, tzinfo="Pacific/Kiritimati")
+        kiritimati = arrow.Arrow(1994, 12, 30, 12, 30,
+                                 tzinfo="Pacific/Kiritimati")
         assert kiritimati.shift(days=+1) == arrow.Arrow(
             1995, 1, 1, 12, 30, tzinfo="Pacific/Kiritimati"
         )
@@ -896,12 +941,24 @@ class TestArrowShift:
             1972, 1, 7, 1, 14, 30, tzinfo="Africa/Monrovia"
         )
 
+    def test_shift_dst_spring_forward_is_consistent(self):
+        # America/ Los_Angeles: clocks jump from 02:00 to 03:00 on 2023-03-12
+        x = arrow.Arrow(2023, 3, 12, tzinfo="America/Los_Angeles")
+
+        # Shifting by 2 hours and 3 hours must not land on the same moment
+        assert x.shift(hours=2) != x.shift(hours=3)
+
+        # Shifting by 1 hour three times must equal shifting by 3 hours once
+        assert x.shift(hours=1).shift(hours=1).shift(
+            hours=1) == x.shift(hours=3)
+
 
 class TestArrowRange:
     def test_year(self):
         result = list(
             arrow.Arrow.range(
-                "year", datetime(2013, 1, 2, 3, 4, 5), datetime(2016, 4, 5, 6, 7, 8)
+                "year", datetime(2013, 1, 2, 3, 4, 5), datetime(
+                    2016, 4, 5, 6, 7, 8)
             )
         )
 
@@ -915,7 +972,8 @@ class TestArrowRange:
     def test_quarter(self):
         result = list(
             arrow.Arrow.range(
-                "quarter", datetime(2013, 2, 3, 4, 5, 6), datetime(2013, 5, 6, 7, 8, 9)
+                "quarter", datetime(2013, 2, 3, 4, 5, 6), datetime(
+                    2013, 5, 6, 7, 8, 9)
             )
         )
 
@@ -927,7 +985,8 @@ class TestArrowRange:
     def test_month(self):
         result = list(
             arrow.Arrow.range(
-                "month", datetime(2013, 2, 3, 4, 5, 6), datetime(2013, 5, 6, 7, 8, 9)
+                "month", datetime(2013, 2, 3, 4, 5, 6), datetime(
+                    2013, 5, 6, 7, 8, 9)
             )
         )
 
@@ -941,7 +1000,8 @@ class TestArrowRange:
     def test_week(self):
         result = list(
             arrow.Arrow.range(
-                "week", datetime(2013, 9, 1, 2, 3, 4), datetime(2013, 10, 1, 2, 3, 4)
+                "week", datetime(2013, 9, 1, 2, 3, 4), datetime(
+                    2013, 10, 1, 2, 3, 4)
             )
         )
 
@@ -956,7 +1016,8 @@ class TestArrowRange:
     def test_day(self):
         result = list(
             arrow.Arrow.range(
-                "day", datetime(2013, 1, 2, 3, 4, 5), datetime(2013, 1, 5, 6, 7, 8)
+                "day", datetime(2013, 1, 2, 3, 4, 5), datetime(
+                    2013, 1, 5, 6, 7, 8)
             )
         )
 
@@ -970,7 +1031,8 @@ class TestArrowRange:
     def test_hour(self):
         result = list(
             arrow.Arrow.range(
-                "hour", datetime(2013, 1, 2, 3, 4, 5), datetime(2013, 1, 2, 6, 7, 8)
+                "hour", datetime(2013, 1, 2, 3, 4, 5), datetime(
+                    2013, 1, 2, 6, 7, 8)
             )
         )
 
@@ -983,7 +1045,8 @@ class TestArrowRange:
 
         result = list(
             arrow.Arrow.range(
-                "hour", datetime(2013, 1, 2, 3, 4, 5), datetime(2013, 1, 2, 3, 4, 5)
+                "hour", datetime(2013, 1, 2, 3, 4, 5), datetime(
+                    2013, 1, 2, 3, 4, 5)
             )
         )
 
@@ -992,7 +1055,8 @@ class TestArrowRange:
     def test_minute(self):
         result = list(
             arrow.Arrow.range(
-                "minute", datetime(2013, 1, 2, 3, 4, 5), datetime(2013, 1, 2, 3, 7, 8)
+                "minute", datetime(2013, 1, 2, 3, 4, 5), datetime(
+                    2013, 1, 2, 3, 7, 8)
             )
         )
 
@@ -1006,7 +1070,8 @@ class TestArrowRange:
     def test_second(self):
         result = list(
             arrow.Arrow.range(
-                "second", datetime(2013, 1, 2, 3, 4, 5), datetime(2013, 1, 2, 3, 4, 8)
+                "second", datetime(2013, 1, 2, 3, 4, 5), datetime(
+                    2013, 1, 2, 3, 4, 8)
             )
         )
 
@@ -1035,7 +1100,8 @@ class TestArrowRange:
 
     def test_naive_tz(self):
         result = arrow.Arrow.range(
-            "year", datetime(2013, 1, 2, 3), datetime(2016, 4, 5, 6), "US/Pacific"
+            "year", datetime(2013, 1, 2, 3), datetime(
+                2016, 4, 5, 6), "US/Pacific"
         )
 
         for r in result:
@@ -1079,7 +1145,8 @@ class TestArrowRange:
         after = arrow.Arrow(2018, 3, 11, 4, tzinfo="US/Pacific")
 
         pacific_range = [t for t in arrow.Arrow.range("hour", before, after)]
-        utc_range = [t.to("utc") for t in arrow.Arrow.range("hour", before, after)]
+        utc_range = [t.to("utc")
+                     for t in arrow.Arrow.range("hour", before, after)]
 
         assert len(pacific_range) == len(set(pacific_range))
         assert len(utc_range) == len(set(utc_range))
@@ -1088,13 +1155,15 @@ class TestArrowRange:
         with pytest.raises(ValueError):
             next(
                 arrow.Arrow.range(
-                    "abc", datetime.now(timezone.utc), datetime.now(timezone.utc)
+                    "abc", datetime.now(
+                        timezone.utc), datetime.now(timezone.utc)
                 )
             )
 
     def test_range_over_months_ending_on_different_days(self):
         # regression test for issue #842
-        result = list(arrow.Arrow.range("month", datetime(2015, 1, 31), limit=4))
+        result = list(arrow.Arrow.range(
+            "month", datetime(2015, 1, 31), limit=4))
         assert result == [
             arrow.Arrow(2015, 1, 31),
             arrow.Arrow(2015, 2, 28),
@@ -1102,21 +1171,24 @@ class TestArrowRange:
             arrow.Arrow(2015, 4, 30),
         ]
 
-        result = list(arrow.Arrow.range("month", datetime(2015, 1, 30), limit=3))
+        result = list(arrow.Arrow.range(
+            "month", datetime(2015, 1, 30), limit=3))
         assert result == [
             arrow.Arrow(2015, 1, 30),
             arrow.Arrow(2015, 2, 28),
             arrow.Arrow(2015, 3, 30),
         ]
 
-        result = list(arrow.Arrow.range("month", datetime(2015, 2, 28), limit=3))
+        result = list(arrow.Arrow.range(
+            "month", datetime(2015, 2, 28), limit=3))
         assert result == [
             arrow.Arrow(2015, 2, 28),
             arrow.Arrow(2015, 3, 28),
             arrow.Arrow(2015, 4, 28),
         ]
 
-        result = list(arrow.Arrow.range("month", datetime(2015, 3, 31), limit=3))
+        result = list(arrow.Arrow.range(
+            "month", datetime(2015, 3, 31), limit=3))
         assert result == [
             arrow.Arrow(2015, 3, 31),
             arrow.Arrow(2015, 4, 30),
@@ -1124,7 +1196,8 @@ class TestArrowRange:
         ]
 
     def test_range_over_quarter_months_ending_on_different_days(self):
-        result = list(arrow.Arrow.range("quarter", datetime(2014, 11, 30), limit=3))
+        result = list(arrow.Arrow.range(
+            "quarter", datetime(2014, 11, 30), limit=3))
         assert result == [
             arrow.Arrow(2014, 11, 30),
             arrow.Arrow(2015, 2, 28),
@@ -1132,7 +1205,8 @@ class TestArrowRange:
         ]
 
     def test_range_over_year_maintains_end_date_across_leap_year(self):
-        result = list(arrow.Arrow.range("year", datetime(2012, 2, 29), limit=5))
+        result = list(arrow.Arrow.range(
+            "year", datetime(2012, 2, 29), limit=5))
         assert result == [
             arrow.Arrow(2012, 2, 29),
             arrow.Arrow(2013, 2, 28),
@@ -1145,7 +1219,8 @@ class TestArrowRange:
 class TestArrowSpanRange:
     def test_year(self):
         result = list(
-            arrow.Arrow.span_range("year", datetime(2013, 2, 1), datetime(2016, 3, 31))
+            arrow.Arrow.span_range("year", datetime(
+                2013, 2, 1), datetime(2016, 3, 31))
         )
 
         assert result == [
@@ -1175,30 +1250,40 @@ class TestArrowSpanRange:
         )
 
         assert result == [
-            (arrow.Arrow(2013, 1, 1), arrow.Arrow(2013, 3, 31, 23, 59, 59, 999999)),
-            (arrow.Arrow(2013, 4, 1), arrow.Arrow(2013, 6, 30, 23, 59, 59, 999999)),
+            (arrow.Arrow(2013, 1, 1), arrow.Arrow(
+                2013, 3, 31, 23, 59, 59, 999999)),
+            (arrow.Arrow(2013, 4, 1), arrow.Arrow(
+                2013, 6, 30, 23, 59, 59, 999999)),
         ]
 
     def test_month(self):
         result = list(
-            arrow.Arrow.span_range("month", datetime(2013, 1, 2), datetime(2013, 4, 15))
+            arrow.Arrow.span_range("month", datetime(
+                2013, 1, 2), datetime(2013, 4, 15))
         )
 
         assert result == [
-            (arrow.Arrow(2013, 1, 1), arrow.Arrow(2013, 1, 31, 23, 59, 59, 999999)),
-            (arrow.Arrow(2013, 2, 1), arrow.Arrow(2013, 2, 28, 23, 59, 59, 999999)),
-            (arrow.Arrow(2013, 3, 1), arrow.Arrow(2013, 3, 31, 23, 59, 59, 999999)),
-            (arrow.Arrow(2013, 4, 1), arrow.Arrow(2013, 4, 30, 23, 59, 59, 999999)),
+            (arrow.Arrow(2013, 1, 1), arrow.Arrow(
+                2013, 1, 31, 23, 59, 59, 999999)),
+            (arrow.Arrow(2013, 2, 1), arrow.Arrow(
+                2013, 2, 28, 23, 59, 59, 999999)),
+            (arrow.Arrow(2013, 3, 1), arrow.Arrow(
+                2013, 3, 31, 23, 59, 59, 999999)),
+            (arrow.Arrow(2013, 4, 1), arrow.Arrow(
+                2013, 4, 30, 23, 59, 59, 999999)),
         ]
 
     def test_week(self):
         result = list(
-            arrow.Arrow.span_range("week", datetime(2013, 2, 2), datetime(2013, 2, 28))
+            arrow.Arrow.span_range("week", datetime(
+                2013, 2, 2), datetime(2013, 2, 28))
         )
 
         assert result == [
-            (arrow.Arrow(2013, 1, 28), arrow.Arrow(2013, 2, 3, 23, 59, 59, 999999)),
-            (arrow.Arrow(2013, 2, 4), arrow.Arrow(2013, 2, 10, 23, 59, 59, 999999)),
+            (arrow.Arrow(2013, 1, 28), arrow.Arrow(
+                2013, 2, 3, 23, 59, 59, 999999)),
+            (arrow.Arrow(2013, 2, 4), arrow.Arrow(
+                2013, 2, 10, 23, 59, 59, 999999)),
             (
                 arrow.Arrow(2013, 2, 11),
                 arrow.Arrow(2013, 2, 17, 23, 59, 59, 999999),
@@ -1207,7 +1292,8 @@ class TestArrowSpanRange:
                 arrow.Arrow(2013, 2, 18),
                 arrow.Arrow(2013, 2, 24, 23, 59, 59, 999999),
             ),
-            (arrow.Arrow(2013, 2, 25), arrow.Arrow(2013, 3, 3, 23, 59, 59, 999999)),
+            (arrow.Arrow(2013, 2, 25), arrow.Arrow(
+                2013, 3, 3, 23, 59, 59, 999999)),
         ]
 
     def test_day(self):
@@ -1265,7 +1351,8 @@ class TestArrowSpanRange:
     def test_hour(self):
         result = list(
             arrow.Arrow.span_range(
-                "hour", datetime(2013, 1, 1, 0, 30), datetime(2013, 1, 1, 3, 30)
+                "hour", datetime(2013, 1, 1, 0, 30), datetime(
+                    2013, 1, 1, 3, 30)
             )
         )
 
@@ -1290,7 +1377,8 @@ class TestArrowSpanRange:
 
         result = list(
             arrow.Arrow.span_range(
-                "hour", datetime(2013, 1, 1, 3, 30), datetime(2013, 1, 1, 3, 30)
+                "hour", datetime(2013, 1, 1, 3, 30), datetime(
+                    2013, 1, 1, 3, 30)
             )
         )
 
@@ -1301,7 +1389,8 @@ class TestArrowSpanRange:
     def test_minute(self):
         result = list(
             arrow.Arrow.span_range(
-                "minute", datetime(2013, 1, 1, 0, 0, 30), datetime(2013, 1, 1, 0, 3, 30)
+                "minute", datetime(2013, 1, 1, 0, 0, 30), datetime(
+                    2013, 1, 1, 0, 3, 30)
             )
         )
 
@@ -1354,7 +1443,8 @@ class TestArrowSpanRange:
         tzinfo = ZoneInfo("US/Pacific")
 
         result = arrow.Arrow.span_range(
-            "hour", datetime(2013, 1, 1, 0), datetime(2013, 1, 1, 3, 59), "US/Pacific"
+            "hour", datetime(2013, 1, 1, 0), datetime(
+                2013, 1, 1, 3, 59), "US/Pacific"
         )
 
         for f, c in result:
@@ -1568,7 +1658,8 @@ class TestArrowInterval:
     def test_correct(self):
         result = list(
             arrow.Arrow.interval(
-                "hour", datetime(2013, 5, 5, 12, 30), datetime(2013, 5, 5, 17, 15), 2
+                "hour", datetime(2013, 5, 5, 12, 30), datetime(
+                    2013, 5, 5, 17, 15), 2
             )
         )
 
@@ -1639,31 +1730,36 @@ class TestArrowSpan:
         floor, ceil = self.arrow.span("year")
 
         assert floor == datetime(2013, 1, 1, tzinfo=tz.tzutc())
-        assert ceil == datetime(2013, 12, 31, 23, 59, 59, 999999, tzinfo=tz.tzutc())
+        assert ceil == datetime(2013, 12, 31, 23, 59,
+                                59, 999999, tzinfo=tz.tzutc())
 
     def test_span_quarter(self):
         floor, ceil = self.arrow.span("quarter")
 
         assert floor == datetime(2013, 1, 1, tzinfo=tz.tzutc())
-        assert ceil == datetime(2013, 3, 31, 23, 59, 59, 999999, tzinfo=tz.tzutc())
+        assert ceil == datetime(2013, 3, 31, 23, 59, 59,
+                                999999, tzinfo=tz.tzutc())
 
     def test_span_quarter_count(self):
         floor, ceil = self.arrow.span("quarter", 2)
 
         assert floor == datetime(2013, 1, 1, tzinfo=tz.tzutc())
-        assert ceil == datetime(2013, 6, 30, 23, 59, 59, 999999, tzinfo=tz.tzutc())
+        assert ceil == datetime(2013, 6, 30, 23, 59, 59,
+                                999999, tzinfo=tz.tzutc())
 
     def test_span_year_count(self):
         floor, ceil = self.arrow.span("year", 2)
 
         assert floor == datetime(2013, 1, 1, tzinfo=tz.tzutc())
-        assert ceil == datetime(2014, 12, 31, 23, 59, 59, 999999, tzinfo=tz.tzutc())
+        assert ceil == datetime(2014, 12, 31, 23, 59,
+                                59, 999999, tzinfo=tz.tzutc())
 
     def test_span_month(self):
         floor, ceil = self.arrow.span("month")
 
         assert floor == datetime(2013, 2, 1, tzinfo=tz.tzutc())
-        assert ceil == datetime(2013, 2, 28, 23, 59, 59, 999999, tzinfo=tz.tzutc())
+        assert ceil == datetime(2013, 2, 28, 23, 59, 59,
+                                999999, tzinfo=tz.tzutc())
 
     def test_span_week(self):
         """
@@ -1674,52 +1770,62 @@ class TestArrowSpan:
         floor, ceil = self.arrow.span("week")
 
         assert floor == datetime(2013, 2, 11, tzinfo=tz.tzutc())
-        assert ceil == datetime(2013, 2, 17, 23, 59, 59, 999999, tzinfo=tz.tzutc())
+        assert ceil == datetime(2013, 2, 17, 23, 59, 59,
+                                999999, tzinfo=tz.tzutc())
         # span week from Tuesday to Monday
         floor, ceil = self.arrow.span("week", week_start=2)
 
         assert floor == datetime(2013, 2, 12, tzinfo=tz.tzutc())
-        assert ceil == datetime(2013, 2, 18, 23, 59, 59, 999999, tzinfo=tz.tzutc())
+        assert ceil == datetime(2013, 2, 18, 23, 59, 59,
+                                999999, tzinfo=tz.tzutc())
         # span week from Saturday to Friday
         floor, ceil = self.arrow.span("week", week_start=6)
 
         assert floor == datetime(2013, 2, 9, tzinfo=tz.tzutc())
-        assert ceil == datetime(2013, 2, 15, 23, 59, 59, 999999, tzinfo=tz.tzutc())
+        assert ceil == datetime(2013, 2, 15, 23, 59, 59,
+                                999999, tzinfo=tz.tzutc())
         # span week from Sunday to Saturday
         floor, ceil = self.arrow.span("week", week_start=7)
 
         assert floor == datetime(2013, 2, 10, tzinfo=tz.tzutc())
-        assert ceil == datetime(2013, 2, 16, 23, 59, 59, 999999, tzinfo=tz.tzutc())
+        assert ceil == datetime(2013, 2, 16, 23, 59, 59,
+                                999999, tzinfo=tz.tzutc())
 
     def test_span_day(self):
         floor, ceil = self.arrow.span("day")
 
         assert floor == datetime(2013, 2, 15, tzinfo=tz.tzutc())
-        assert ceil == datetime(2013, 2, 15, 23, 59, 59, 999999, tzinfo=tz.tzutc())
+        assert ceil == datetime(2013, 2, 15, 23, 59, 59,
+                                999999, tzinfo=tz.tzutc())
 
     def test_span_hour(self):
         floor, ceil = self.arrow.span("hour")
 
         assert floor == datetime(2013, 2, 15, 3, tzinfo=tz.tzutc())
-        assert ceil == datetime(2013, 2, 15, 3, 59, 59, 999999, tzinfo=tz.tzutc())
+        assert ceil == datetime(2013, 2, 15, 3, 59, 59,
+                                999999, tzinfo=tz.tzutc())
 
     def test_span_minute(self):
         floor, ceil = self.arrow.span("minute")
 
         assert floor == datetime(2013, 2, 15, 3, 41, tzinfo=tz.tzutc())
-        assert ceil == datetime(2013, 2, 15, 3, 41, 59, 999999, tzinfo=tz.tzutc())
+        assert ceil == datetime(2013, 2, 15, 3, 41, 59,
+                                999999, tzinfo=tz.tzutc())
 
     def test_span_second(self):
         floor, ceil = self.arrow.span("second")
 
         assert floor == datetime(2013, 2, 15, 3, 41, 22, tzinfo=tz.tzutc())
-        assert ceil == datetime(2013, 2, 15, 3, 41, 22, 999999, tzinfo=tz.tzutc())
+        assert ceil == datetime(2013, 2, 15, 3, 41, 22,
+                                999999, tzinfo=tz.tzutc())
 
     def test_span_microsecond(self):
         floor, ceil = self.arrow.span("microsecond")
 
-        assert floor == datetime(2013, 2, 15, 3, 41, 22, 8923, tzinfo=tz.tzutc())
-        assert ceil == datetime(2013, 2, 15, 3, 41, 22, 8923, tzinfo=tz.tzutc())
+        assert floor == datetime(
+            2013, 2, 15, 3, 41, 22, 8923, tzinfo=tz.tzutc())
+        assert ceil == datetime(2013, 2, 15, 3, 41, 22,
+                                8923, tzinfo=tz.tzutc())
 
     def test_floor(self):
         floor, ceil = self.arrow.span("month")
@@ -1796,7 +1902,8 @@ class TestArrowSpan:
         assert floor_mon == datetime(2013, 2, 11, tzinfo=tz.tzutc())
         # Friday should ceil to next Sunday (2013-02-17)
         ceil_mon = self.arrow.ceil("week", week_start=1)
-        assert ceil_mon == datetime(2013, 2, 17, 23, 59, 59, 999999, tzinfo=tz.tzutc())
+        assert ceil_mon == datetime(
+            2013, 2, 17, 23, 59, 59, 999999, tzinfo=tz.tzutc())
 
         # Test Sunday start (week_start=7)
         # Friday should floor to previous Sunday (2013-02-10)
@@ -1804,7 +1911,8 @@ class TestArrowSpan:
         assert floor_sun == datetime(2013, 2, 10, tzinfo=tz.tzutc())
         # Friday should ceil to next Saturday (2013-02-16)
         ceil_sun = self.arrow.ceil("week", week_start=7)
-        assert ceil_sun == datetime(2013, 2, 16, 23, 59, 59, 999999, tzinfo=tz.tzutc())
+        assert ceil_sun == datetime(
+            2013, 2, 16, 23, 59, 59, 999999, tzinfo=tz.tzutc())
 
         # Test Saturday start (week_start=6)
         # Friday should floor to previous Saturday (2013-02-09)
@@ -1812,7 +1920,8 @@ class TestArrowSpan:
         assert floor_sat == datetime(2013, 2, 9, tzinfo=tz.tzutc())
         # Friday should ceil to next Friday (2013-02-15)
         ceil_sat = self.arrow.ceil("week", week_start=6)
-        assert ceil_sat == datetime(2013, 2, 15, 23, 59, 59, 999999, tzinfo=tz.tzutc())
+        assert ceil_sat == datetime(
+            2013, 2, 15, 23, 59, 59, 999999, tzinfo=tz.tzutc())
 
     def test_floor_ceil_week_start_backward_compatibility(self):
         """
@@ -1836,12 +1945,14 @@ class TestArrowSpan:
         for frame in ["hour", "day", "month", "year"]:
             # floor should work the same with or without week_start for non-week frames
             floor_without = self.arrow.floor(frame)
-            floor_with = self.arrow.floor(frame, week_start=7)  # should be ignored
+            floor_with = self.arrow.floor(
+                frame, week_start=7)  # should be ignored
             assert floor_without == floor_with
 
             # ceil should work the same with or without week_start for non-week frames
             ceil_without = self.arrow.ceil(frame)
-            ceil_with = self.arrow.ceil(frame, week_start=7)  # should be ignored
+            ceil_with = self.arrow.ceil(
+                frame, week_start=7)  # should be ignored
             assert ceil_without == ceil_with
 
     def test_floor_ceil_week_start_validation(self):
@@ -1899,7 +2010,8 @@ class TestArrowSpan:
         floor, ceil = self.arrow.span("hour", bounds="()")
 
         assert floor == datetime(2013, 2, 15, 3, 0, 0, 1, tzinfo=tz.tzutc())
-        assert ceil == datetime(2013, 2, 15, 3, 59, 59, 999999, tzinfo=tz.tzutc())
+        assert ceil == datetime(2013, 2, 15, 3, 59, 59,
+                                999999, tzinfo=tz.tzutc())
 
     def test_bounds_are_validated(self):
         with pytest.raises(ValueError):
@@ -1908,8 +2020,10 @@ class TestArrowSpan:
     def test_exact(self):
         result_floor, result_ceil = self.arrow.span("hour", exact=True)
 
-        expected_floor = datetime(2013, 2, 15, 3, 41, 22, 8923, tzinfo=tz.tzutc())
-        expected_ceil = datetime(2013, 2, 15, 4, 41, 22, 8922, tzinfo=tz.tzutc())
+        expected_floor = datetime(
+            2013, 2, 15, 3, 41, 22, 8923, tzinfo=tz.tzutc())
+        expected_ceil = datetime(
+            2013, 2, 15, 4, 41, 22, 8922, tzinfo=tz.tzutc())
 
         assert result_floor == expected_floor
         assert result_ceil == expected_ceil
@@ -1917,25 +2031,32 @@ class TestArrowSpan:
     def test_exact_inclusive_inclusive(self):
         floor, ceil = self.arrow.span("minute", bounds="[]", exact=True)
 
-        assert floor == datetime(2013, 2, 15, 3, 41, 22, 8923, tzinfo=tz.tzutc())
-        assert ceil == datetime(2013, 2, 15, 3, 42, 22, 8923, tzinfo=tz.tzutc())
+        assert floor == datetime(
+            2013, 2, 15, 3, 41, 22, 8923, tzinfo=tz.tzutc())
+        assert ceil == datetime(2013, 2, 15, 3, 42, 22,
+                                8923, tzinfo=tz.tzutc())
 
     def test_exact_exclusive_inclusive(self):
         floor, ceil = self.arrow.span("day", bounds="(]", exact=True)
 
-        assert floor == datetime(2013, 2, 15, 3, 41, 22, 8924, tzinfo=tz.tzutc())
-        assert ceil == datetime(2013, 2, 16, 3, 41, 22, 8923, tzinfo=tz.tzutc())
+        assert floor == datetime(
+            2013, 2, 15, 3, 41, 22, 8924, tzinfo=tz.tzutc())
+        assert ceil == datetime(2013, 2, 16, 3, 41, 22,
+                                8923, tzinfo=tz.tzutc())
 
     def test_exact_exclusive_exclusive(self):
         floor, ceil = self.arrow.span("second", bounds="()", exact=True)
 
-        assert floor == datetime(2013, 2, 15, 3, 41, 22, 8924, tzinfo=tz.tzutc())
-        assert ceil == datetime(2013, 2, 15, 3, 41, 23, 8922, tzinfo=tz.tzutc())
+        assert floor == datetime(
+            2013, 2, 15, 3, 41, 22, 8924, tzinfo=tz.tzutc())
+        assert ceil == datetime(2013, 2, 15, 3, 41, 23,
+                                8922, tzinfo=tz.tzutc())
 
     def test_all_parameters_specified(self):
         floor, ceil = self.arrow.span("week", bounds="()", exact=True, count=2)
 
-        assert floor == datetime(2013, 2, 15, 3, 41, 22, 8924, tzinfo=tz.tzutc())
+        assert floor == datetime(
+            2013, 2, 15, 3, 41, 22, 8924, tzinfo=tz.tzutc())
         assert ceil == datetime(2013, 3, 1, 3, 41, 22, 8922, tzinfo=tz.tzutc())
 
 
@@ -1947,74 +2068,106 @@ class TestArrowHumanize:
         later1 = self.now.shift(seconds=1)
         assert self.now.humanize(later1, granularity="second") == "just now"
         assert later1.humanize(self.now, granularity="second") == "just now"
-        assert self.now.humanize(later1, granularity="minute") == "0 minutes ago"
-        assert later1.humanize(self.now, granularity="minute") == "in 0 minutes"
+        assert self.now.humanize(
+            later1, granularity="minute") == "0 minutes ago"
+        assert later1.humanize(
+            self.now, granularity="minute") == "in 0 minutes"
 
         later100 = self.now.shift(seconds=100)
-        assert self.now.humanize(later100, granularity="second") == "100 seconds ago"
-        assert later100.humanize(self.now, granularity="second") == "in 100 seconds"
-        assert self.now.humanize(later100, granularity="minute") == "a minute ago"
-        assert later100.humanize(self.now, granularity="minute") == "in a minute"
+        assert self.now.humanize(
+            later100, granularity="second") == "100 seconds ago"
+        assert later100.humanize(
+            self.now, granularity="second") == "in 100 seconds"
+        assert self.now.humanize(
+            later100, granularity="minute") == "a minute ago"
+        assert later100.humanize(
+            self.now, granularity="minute") == "in a minute"
         assert self.now.humanize(later100, granularity="hour") == "0 hours ago"
         assert later100.humanize(self.now, granularity="hour") == "in 0 hours"
 
         later4000 = self.now.shift(seconds=4000)
-        assert self.now.humanize(later4000, granularity="minute") == "66 minutes ago"
-        assert later4000.humanize(self.now, granularity="minute") == "in 66 minutes"
-        assert self.now.humanize(later4000, granularity="hour") == "an hour ago"
+        assert self.now.humanize(
+            later4000, granularity="minute") == "66 minutes ago"
+        assert later4000.humanize(
+            self.now, granularity="minute") == "in 66 minutes"
+        assert self.now.humanize(
+            later4000, granularity="hour") == "an hour ago"
         assert later4000.humanize(self.now, granularity="hour") == "in an hour"
         assert self.now.humanize(later4000, granularity="day") == "0 days ago"
         assert later4000.humanize(self.now, granularity="day") == "in 0 days"
 
         later105 = self.now.shift(seconds=10**5)
-        assert self.now.humanize(later105, granularity="hour") == "27 hours ago"
+        assert self.now.humanize(
+            later105, granularity="hour") == "27 hours ago"
         assert later105.humanize(self.now, granularity="hour") == "in 27 hours"
         assert self.now.humanize(later105, granularity="day") == "a day ago"
         assert later105.humanize(self.now, granularity="day") == "in a day"
         assert self.now.humanize(later105, granularity="week") == "0 weeks ago"
         assert later105.humanize(self.now, granularity="week") == "in 0 weeks"
-        assert self.now.humanize(later105, granularity="month") == "0 months ago"
-        assert later105.humanize(self.now, granularity="month") == "in 0 months"
-        assert self.now.humanize(later105, granularity=["month"]) == "0 months ago"
-        assert later105.humanize(self.now, granularity=["month"]) == "in 0 months"
+        assert self.now.humanize(
+            later105, granularity="month") == "0 months ago"
+        assert later105.humanize(
+            self.now, granularity="month") == "in 0 months"
+        assert self.now.humanize(later105, granularity=[
+                                 "month"]) == "0 months ago"
+        assert later105.humanize(self.now, granularity=[
+                                 "month"]) == "in 0 months"
 
         later106 = self.now.shift(seconds=3 * 10**6)
         assert self.now.humanize(later106, granularity="day") == "34 days ago"
         assert later106.humanize(self.now, granularity="day") == "in 34 days"
         assert self.now.humanize(later106, granularity="week") == "4 weeks ago"
         assert later106.humanize(self.now, granularity="week") == "in 4 weeks"
-        assert self.now.humanize(later106, granularity="month") == "a month ago"
+        assert self.now.humanize(
+            later106, granularity="month") == "a month ago"
         assert later106.humanize(self.now, granularity="month") == "in a month"
         assert self.now.humanize(later106, granularity="year") == "0 years ago"
         assert later106.humanize(self.now, granularity="year") == "in 0 years"
 
         later506 = self.now.shift(seconds=50 * 10**6)
-        assert self.now.humanize(later506, granularity="week") == "82 weeks ago"
+        assert self.now.humanize(
+            later506, granularity="week") == "82 weeks ago"
         assert later506.humanize(self.now, granularity="week") == "in 82 weeks"
-        assert self.now.humanize(later506, granularity="month") == "18 months ago"
-        assert later506.humanize(self.now, granularity="month") == "in 18 months"
-        assert self.now.humanize(later506, granularity="quarter") == "6 quarters ago"
-        assert later506.humanize(self.now, granularity="quarter") == "in 6 quarters"
+        assert self.now.humanize(
+            later506, granularity="month") == "18 months ago"
+        assert later506.humanize(
+            self.now, granularity="month") == "in 18 months"
+        assert self.now.humanize(
+            later506, granularity="quarter") == "6 quarters ago"
+        assert later506.humanize(
+            self.now, granularity="quarter") == "in 6 quarters"
         assert self.now.humanize(later506, granularity="year") == "a year ago"
         assert later506.humanize(self.now, granularity="year") == "in a year"
 
-        assert self.now.humanize(later1, granularity="quarter") == "0 quarters ago"
-        assert later1.humanize(self.now, granularity="quarter") == "in 0 quarters"
+        assert self.now.humanize(
+            later1, granularity="quarter") == "0 quarters ago"
+        assert later1.humanize(
+            self.now, granularity="quarter") == "in 0 quarters"
         later107 = self.now.shift(seconds=10**7)
-        assert self.now.humanize(later107, granularity="quarter") == "a quarter ago"
-        assert later107.humanize(self.now, granularity="quarter") == "in a quarter"
+        assert self.now.humanize(
+            later107, granularity="quarter") == "a quarter ago"
+        assert later107.humanize(
+            self.now, granularity="quarter") == "in a quarter"
         later207 = self.now.shift(seconds=2 * 10**7)
-        assert self.now.humanize(later207, granularity="quarter") == "2 quarters ago"
-        assert later207.humanize(self.now, granularity="quarter") == "in 2 quarters"
+        assert self.now.humanize(
+            later207, granularity="quarter") == "2 quarters ago"
+        assert later207.humanize(
+            self.now, granularity="quarter") == "in 2 quarters"
         later307 = self.now.shift(seconds=3 * 10**7)
-        assert self.now.humanize(later307, granularity="quarter") == "3 quarters ago"
-        assert later307.humanize(self.now, granularity="quarter") == "in 3 quarters"
+        assert self.now.humanize(
+            later307, granularity="quarter") == "3 quarters ago"
+        assert later307.humanize(
+            self.now, granularity="quarter") == "in 3 quarters"
         later377 = self.now.shift(seconds=3.7 * 10**7)
-        assert self.now.humanize(later377, granularity="quarter") == "4 quarters ago"
-        assert later377.humanize(self.now, granularity="quarter") == "in 4 quarters"
+        assert self.now.humanize(
+            later377, granularity="quarter") == "4 quarters ago"
+        assert later377.humanize(
+            self.now, granularity="quarter") == "in 4 quarters"
         later407 = self.now.shift(seconds=4 * 10**7)
-        assert self.now.humanize(later407, granularity="quarter") == "5 quarters ago"
-        assert later407.humanize(self.now, granularity="quarter") == "in 5 quarters"
+        assert self.now.humanize(
+            later407, granularity="quarter") == "5 quarters ago"
+        assert later407.humanize(
+            self.now, granularity="quarter") == "in 5 quarters"
 
         later108 = self.now.shift(seconds=10**8)
         assert self.now.humanize(later108, granularity="year") == "3 years ago"
@@ -2041,7 +2194,8 @@ class TestArrowHumanize:
         assert self.now.humanize(granularity="second") == "just now"
         assert self.now.humanize(granularity=["second"]) == "just now"
         assert (
-            self.now.humanize(granularity=["year", "month", "day", "hour", "second"])
+            self.now.humanize(
+                granularity=["year", "month", "day", "hour", "second"])
             == "in 0 years 0 months 0 days 0 hours and 0 seconds"
         )
 
@@ -2100,13 +2254,15 @@ class TestArrowHumanize:
 
         one_min_one_sec_ago = self.now.shift(minutes=-1, seconds=-1)
         assert (
-            one_min_one_sec_ago.humanize(self.now, granularity=["minute", "second"])
+            one_min_one_sec_ago.humanize(
+                self.now, granularity=["minute", "second"])
             == "a minute and a second ago"
         )
 
         one_min_two_secs_ago = self.now.shift(minutes=-1, seconds=-2)
         assert (
-            one_min_two_secs_ago.humanize(self.now, granularity=["minute", "second"])
+            one_min_two_secs_ago.humanize(
+                self.now, granularity=["minute", "second"])
             == "a minute and 2 seconds ago"
         )
 
@@ -2329,7 +2485,8 @@ class TestArrowHumanize:
     def test_no_floats(self):
         arw = arrow.Arrow(2013, 1, 1, 0, 0, 0)
         later = arw.shift(seconds=55000)
-        humanize_string = arw.humanize(later, locale="bg", granularity="minute")
+        humanize_string = arw.humanize(
+            later, locale="bg", granularity="minute")
         assert humanize_string == "916 минути назад"
 
     def test_no_floats_multi_gran(self):
@@ -2636,7 +2793,8 @@ class TestArrowDehumanize:
             )
 
             assert arw.dehumanize(second_ago_string, locale=lang) == second_ago
-            assert arw.dehumanize(second_future_string, locale=lang) == second_future
+            assert arw.dehumanize(second_future_string,
+                                  locale=lang) == second_future
 
     def test_minute(self, locale_list_no_weeks: List[str]):
         for lang in locale_list_no_weeks:
@@ -2652,7 +2810,8 @@ class TestArrowDehumanize:
             )
 
             assert arw.dehumanize(minute_ago_string, locale=lang) == minute_ago
-            assert arw.dehumanize(minute_future_string, locale=lang) == minute_future
+            assert arw.dehumanize(minute_future_string,
+                                  locale=lang) == minute_future
 
     def test_minutes(self, locale_list_no_weeks: List[str]):
         for lang in locale_list_no_weeks:
@@ -2668,7 +2827,8 @@ class TestArrowDehumanize:
             )
 
             assert arw.dehumanize(minute_ago_string, locale=lang) == minute_ago
-            assert arw.dehumanize(minute_future_string, locale=lang) == minute_future
+            assert arw.dehumanize(minute_future_string,
+                                  locale=lang) == minute_future
 
     def test_hour(self, locale_list_no_weeks: List[str]):
         for lang in locale_list_no_weeks:
@@ -2676,13 +2836,15 @@ class TestArrowDehumanize:
             hour_ago = arw.shift(hours=-1)
             hour_future = arw.shift(hours=1)
 
-            hour_ago_string = hour_ago.humanize(arw, locale=lang, granularity=["hour"])
+            hour_ago_string = hour_ago.humanize(
+                arw, locale=lang, granularity=["hour"])
             hour_future_string = hour_future.humanize(
                 arw, locale=lang, granularity=["hour"]
             )
 
             assert arw.dehumanize(hour_ago_string, locale=lang) == hour_ago
-            assert arw.dehumanize(hour_future_string, locale=lang) == hour_future
+            assert arw.dehumanize(hour_future_string,
+                                  locale=lang) == hour_future
 
     def test_hours(self, locale_list_no_weeks: List[str]):
         for lang in locale_list_no_weeks:
@@ -2690,13 +2852,15 @@ class TestArrowDehumanize:
             hour_ago = arw.shift(hours=-3)
             hour_future = arw.shift(hours=3)
 
-            hour_ago_string = hour_ago.humanize(arw, locale=lang, granularity=["hour"])
+            hour_ago_string = hour_ago.humanize(
+                arw, locale=lang, granularity=["hour"])
             hour_future_string = hour_future.humanize(
                 arw, locale=lang, granularity=["hour"]
             )
 
             assert arw.dehumanize(hour_ago_string, locale=lang) == hour_ago
-            assert arw.dehumanize(hour_future_string, locale=lang) == hour_future
+            assert arw.dehumanize(hour_future_string,
+                                  locale=lang) == hour_future
 
     def test_week(self, locale_list_with_weeks: List[str]):
         for lang in locale_list_with_weeks:
@@ -2704,13 +2868,15 @@ class TestArrowDehumanize:
             week_ago = arw.shift(weeks=-1)
             week_future = arw.shift(weeks=1)
 
-            week_ago_string = week_ago.humanize(arw, locale=lang, granularity=["week"])
+            week_ago_string = week_ago.humanize(
+                arw, locale=lang, granularity=["week"])
             week_future_string = week_future.humanize(
                 arw, locale=lang, granularity=["week"]
             )
 
             assert arw.dehumanize(week_ago_string, locale=lang) == week_ago
-            assert arw.dehumanize(week_future_string, locale=lang) == week_future
+            assert arw.dehumanize(week_future_string,
+                                  locale=lang) == week_future
 
     def test_weeks(self, locale_list_with_weeks: List[str]):
         for lang in locale_list_with_weeks:
@@ -2718,13 +2884,15 @@ class TestArrowDehumanize:
             week_ago = arw.shift(weeks=-7)
             week_future = arw.shift(weeks=7)
 
-            week_ago_string = week_ago.humanize(arw, locale=lang, granularity=["week"])
+            week_ago_string = week_ago.humanize(
+                arw, locale=lang, granularity=["week"])
             week_future_string = week_future.humanize(
                 arw, locale=lang, granularity=["week"]
             )
 
             assert arw.dehumanize(week_ago_string, locale=lang) == week_ago
-            assert arw.dehumanize(week_future_string, locale=lang) == week_future
+            assert arw.dehumanize(week_future_string,
+                                  locale=lang) == week_future
 
     def test_year(self, locale_list_no_weeks: List[str]):
         for lang in locale_list_no_weeks:
@@ -2732,13 +2900,15 @@ class TestArrowDehumanize:
             year_ago = arw.shift(years=-1)
             year_future = arw.shift(years=1)
 
-            year_ago_string = year_ago.humanize(arw, locale=lang, granularity=["year"])
+            year_ago_string = year_ago.humanize(
+                arw, locale=lang, granularity=["year"])
             year_future_string = year_future.humanize(
                 arw, locale=lang, granularity=["year"]
             )
 
             assert arw.dehumanize(year_ago_string, locale=lang) == year_ago
-            assert arw.dehumanize(year_future_string, locale=lang) == year_future
+            assert arw.dehumanize(year_future_string,
+                                  locale=lang) == year_future
 
     def test_years(self, locale_list_no_weeks: List[str]):
         for lang in locale_list_no_weeks:
@@ -2746,13 +2916,15 @@ class TestArrowDehumanize:
             year_ago = arw.shift(years=-10)
             year_future = arw.shift(years=10)
 
-            year_ago_string = year_ago.humanize(arw, locale=lang, granularity=["year"])
+            year_ago_string = year_ago.humanize(
+                arw, locale=lang, granularity=["year"])
             year_future_string = year_future.humanize(
                 arw, locale=lang, granularity=["year"]
             )
 
             assert arw.dehumanize(year_ago_string, locale=lang) == year_ago
-            assert arw.dehumanize(year_future_string, locale=lang) == year_future
+            assert arw.dehumanize(year_future_string,
+                                  locale=lang) == year_future
 
     def test_gt_than_10_years(self, locale_list_no_weeks: List[str]):
         for lang in locale_list_no_weeks:
@@ -2760,13 +2932,15 @@ class TestArrowDehumanize:
             year_ago = arw.shift(years=-25)
             year_future = arw.shift(years=25)
 
-            year_ago_string = year_ago.humanize(arw, locale=lang, granularity=["year"])
+            year_ago_string = year_ago.humanize(
+                arw, locale=lang, granularity=["year"])
             year_future_string = year_future.humanize(
                 arw, locale=lang, granularity=["year"]
             )
 
             assert arw.dehumanize(year_ago_string, locale=lang) == year_ago
-            assert arw.dehumanize(year_future_string, locale=lang) == year_future
+            assert arw.dehumanize(year_future_string,
+                                  locale=lang) == year_future
 
     def test_mixed_granularity(self, locale_list_no_weeks: List[str]):
         for lang in locale_list_no_weeks:
@@ -2866,7 +3040,8 @@ class TestArrowDehumanize:
         )
 
         assert arw.dehumanize(second_ago_string, locale="zh_hk") == second_ago
-        assert arw.dehumanize(second_future_string, locale="zh_hk") == second_future
+        assert arw.dehumanize(second_future_string,
+                              locale="zh_hk") == second_future
 
     # Ensures relative units are required in string
     def test_require_relative_unit(self, locale_list_no_weeks: List[str]):
@@ -3076,12 +3251,14 @@ class TestArrowUtil:
         assert get_datetime(arw) == arw.datetime
         assert get_datetime(dt) == dt
         assert (
-            get_datetime(timestamp) == arrow.Arrow.utcfromtimestamp(timestamp).datetime
+            get_datetime(timestamp) == arrow.Arrow.utcfromtimestamp(
+                timestamp).datetime
         )
 
         with pytest.raises(ValueError) as raise_ctx:
             get_datetime("abc")
-        assert "not recognized as a datetime or timestamp" in str(raise_ctx.value)
+        assert "not recognized as a datetime or timestamp" in str(
+            raise_ctx.value)
 
     def test_get_tzinfo(self):
         get_tzinfo = arrow.Arrow._get_tzinfo
@@ -3091,8 +3268,10 @@ class TestArrowUtil:
         assert "not recognized as a timezone" in str(raise_ctx.value)
 
     def test_get_iteration_params(self):
-        assert arrow.Arrow._get_iteration_params("end", None) == ("end", sys.maxsize)
-        assert arrow.Arrow._get_iteration_params(None, 100) == (arrow.Arrow.max, 100)
+        assert arrow.Arrow._get_iteration_params(
+            "end", None) == ("end", sys.maxsize)
+        assert arrow.Arrow._get_iteration_params(
+            None, 100) == (arrow.Arrow.max, 100)
         assert arrow.Arrow._get_iteration_params(100, 120) == (100, 120)
 
         with pytest.raises(ValueError):
